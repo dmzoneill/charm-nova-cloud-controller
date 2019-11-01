@@ -227,8 +227,9 @@ CA_CERT_PATH = '/usr/local/share/ca-certificates/keystone_juju_ca_cert.crt'
 NOVA_SSH_DIR = '/etc/nova/compute_ssh/'
 
 SERIAL_CONSOLE = {
-    'packages': ['nova-serialproxy', 'websockify'],
-    'services': ['nova-serialproxy'],
+    'packages': ['nova-serialproxy', 'nova-consoleauth',
+                 'websockify'],
+    'services': ['nova-serialproxy', 'nova-consoleauth'],
 }
 
 

@@ -402,6 +402,11 @@ class NovaConfigContext(ch_context.WorkerConfigContext):
         ctxt['console_access_protocol'] = hookenv.config(
             'console-access-protocol')
         ctxt['console_access_port'] = hookenv.config('console-access-port')
+
+        if hookenv.config('enable-sriov-nic-selection'):
+            ctxt['enable_sriov_nic_selection'] = \
+                hookenv.config('enable-sriov-nic-selection')
+
         return ctxt
 
 

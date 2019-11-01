@@ -13,9 +13,11 @@
 # limitations under the License.
 
 from collections import OrderedDict
+import os
 import platform
 import re
 import six
+import time
 import subprocess
 import sys
 import time
@@ -723,9 +725,12 @@ def _run_with_retries(cmd, max_retries=CMD_RETRY_COUNT, retry_exitcodes=(1,),
     :param: cmd_env: Environment variables to add to the command run.
     :type cmd_env: Option[None, Dict[str, str]]
     """
+
     env = get_apt_dpkg_env()
+    kwargs = {}
     if cmd_env:
         env.update(cmd_env)
+        kwargs['env'] = env
 
     if not retry_message:
         retry_message = "Failed executing '{}'".format(" ".join(cmd))
@@ -737,7 +742,8 @@ def _run_with_retries(cmd, max_retries=CMD_RETRY_COUNT, retry_exitcodes=(1,),
     retry_results = (None,) + retry_exitcodes
     while result in retry_results:
         try:
-            result = subprocess.check_call(cmd, env=env)
+            # result = subprocess.check_call(cmd, env=env)
+            result = subprocess.check_call(cmd, **kwargs)
         except subprocess.CalledProcessError as e:
             retry_count = retry_count + 1
             if retry_count > max_retries:
@@ -756,12 +762,18 @@ def _run_apt_command(cmd, fatal=False):
                   retried.
     :type fatal: bool
     """
+    # Provide DEBIAN_FRONTEND=noninteractive if not present in the environment.
+    cmd_env = {
+        'DEBIAN_FRONTEND': os.environ.get('DEBIAN_FRONTEND', 'noninteractive')}
+
     if fatal:
         _run_with_retries(
-            cmd, retry_exitcodes=(1, APT_NO_LOCK,),
+            cmd, cmd_env=cmd_env, retry_exitcodes=(1, APT_NO_LOCK,),
             retry_message="Couldn't acquire DPKG lock")
     else:
-        subprocess.call(cmd, env=get_apt_dpkg_env())
+        env = get_apt_dpkg_env()
+        env.update(cmd_env)
+        subprocess.call(cmd, env=env)
 
 
 def get_upstream_version(package):

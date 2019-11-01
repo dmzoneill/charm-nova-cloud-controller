@@ -281,10 +281,6 @@ class NovaCCUtilsTests(CharmTestCase):
         for service in console_services:
             self.assertIn(service, _map['/etc/nova/nova.conf']['services'])
         self.os_release.return_value = 'train'
-        _map = utils.resource_map()
-        self.assertNotIn(
-            'nova-consoleauth',
-            _map['/etc/nova/nova.conf']['services'])
 
     @patch('charmhelpers.contrib.openstack.context.SubordinateConfigContext')
     def test_resource_map_console_novnc(self, subcontext):
@@ -296,10 +292,6 @@ class NovaCCUtilsTests(CharmTestCase):
         for service in console_services:
             self.assertIn(service, _map['/etc/nova/nova.conf']['services'])
         self.os_release.return_value = 'train'
-        _map = utils.resource_map()
-        self.assertNotIn(
-            'nova-consoleauth',
-            _map['/etc/nova/nova.conf']['services'])
 
     @patch('charmhelpers.contrib.openstack.context.SubordinateConfigContext')
     def test_resource_map_console_vnc(self, subcontext):
@@ -312,10 +304,6 @@ class NovaCCUtilsTests(CharmTestCase):
         for service in console_services:
             self.assertIn(service, _map['/etc/nova/nova.conf']['services'])
         self.os_release.return_value = 'train'
-        _map = utils.resource_map()
-        self.assertNotIn(
-            'nova-consoleauth',
-            _map['/etc/nova/nova.conf']['services'])
 
     def test_console_attributes_none(self):
         self.test_config.set('console-access-protocol', 'None')
@@ -344,10 +332,6 @@ class NovaCCUtilsTests(CharmTestCase):
         for service in console_services:
             self.assertIn(service, _map['/etc/nova/nova.conf']['services'])
         self.os_release.return_value = 'train'
-        _map = utils.resource_map()
-        self.assertNotIn(
-            'nova-consoleauth',
-            _map['/etc/nova/nova.conf']['services'])
 
     @patch('charmhelpers.contrib.openstack.neutron.os_release')
     @patch('os.path.exists')
@@ -441,8 +425,8 @@ class NovaCCUtilsTests(CharmTestCase):
         _servs = utils.common.console_attributes('services')
         _pkgs = utils.common.console_attributes('packages')
         _proxy_page = utils.common.console_attributes('proxy-page')
-        vnc_pkgs = ['nova-novncproxy', 'nova-xvpvncproxy']
-        vnc_servs = ['nova-novncproxy', 'nova-xvpvncproxy']
+        vnc_pkgs = ['nova-consoleauth', 'nova-novncproxy', 'nova-xvpvncproxy']
+        vnc_servs = ['nova-consoleauth', 'nova-novncproxy', 'nova-xvpvncproxy']
         self.assertEqual(_proto, 'vnc')
         self.assertEqual(sorted(_servs), sorted(vnc_servs))
         self.assertEqual(sorted(_pkgs), sorted(vnc_pkgs))
@@ -491,12 +475,12 @@ class NovaCCUtilsTests(CharmTestCase):
         self.relation_ids.return_value = []
         self.os_release.return_value = 'diablo'
         pkgs = utils.determine_packages()
-        console_pkgs = ['nova-spiceproxy', 'nova-consoleauth']
+        console_pkgs = ['nova-consoleauth', 'nova-spiceproxy']
         for console_pkg in console_pkgs:
             self.assertIn(console_pkg, pkgs)
         self.os_release.return_value = 'train'
         pkgs = utils.determine_packages()
-        self.assertNotIn(
+        self.assertIn(
             'nova-consoleauth', pkgs)
 
     @patch('charmhelpers.contrib.openstack.context.SubordinateConfigContext')
@@ -569,7 +553,7 @@ class NovaCCUtilsTests(CharmTestCase):
             self.assertIn(console_pkg, pkgs)
         self.os_release.return_value = 'train'
         pkgs = utils.determine_packages()
-        self.assertNotIn('nova-consoleauth', pkgs)
+        self.assertIn('nova-consoleauth', pkgs)
 
     @patch('charmhelpers.contrib.openstack.context.SubordinateConfigContext')
     def test_determine_packages_serial_console_icehouse(self, subcontext):

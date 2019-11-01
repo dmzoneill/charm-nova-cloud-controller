@@ -448,6 +448,11 @@ def get_os_codename_package(package, fatal=True):
                 # Second item in list is Version
                 return line.split()[1]
 
+    # somewhat concerning that they were importing this here
+    # hopefully the 'ubuntu_apt_pkg as apt' in the imports at the top are okay
+    # commenting out
+    # import apt_pkg as apt
+
     cache = apt_cache()
 
     try:
@@ -660,6 +665,11 @@ def openstack_upgrade_available(package):
     :returns: bool:    : Returns True if configured installation source offers
                          a newer version of package.
     """
+
+    # somewhat concerning that they were importing this here
+    # hopefully the 'ubuntu_apt_pkg as apt' in the imports at the top are okay
+    # commenting out
+    # import apt_pkg as apt
 
     src = config('openstack-origin')
     cur_vers = get_os_version_package(package)
